@@ -4,110 +4,171 @@
 
 using namespace std;
 
-class Phonebook {
+class Phonebook {  // 전화번호부 객체 생성
 public:
-	map<string, string> phonebook;
+	map<string, string> phonebook;  
 	map<string, string>::iterator it;
 	map<string, string> relationship;;
 	map<string, string>::iterator it2;
 	map<string, string> addressbook;
 	map<string, string> banbook;
 	map<string, string>::iterator it3;
-	string name, number, r, address;
+	map<string, string> daybook;
+	map<string, string> datebook;
+	string name, number, r, address, dayname, date;
 
 public:
-	void addp();
-	void addr();
-	void addaddress();
-	void search();
-	void searcha();
-	void pop();
-	void change();
-	void show();
-	void showr();
-	void showb();
-	void plusban();
-	void minusban();
+	void addp();  // 전화번호부에 번호를 추가하는 함수
+	void addr();  // 전화번호부에 그룹을 추가하는 함수
+	void addaddress();  // 전화번호부에 주소를 추가하는 함수
+	void addday();  // 전화번호부에 기념일을 추가하는 함수
+	void search();  // 전화번호를 찾는 함수
+	void searcha();  // 주소를 찾는 함수
+	void searchd();  // 기념일을 찾는 함수
+	void pop();  // 전화번호를 삭제하는 함수
+	void change();  // 전화번호를 변경하는 함수
+	void show();  // 전화번호부 전체를 출력하는 함수
+	void showr();  // 그룹을 기준으로 전화번호부를 출력하는 함수
+	void showb();  // 차단된 번호를 출력하는 함수
+	void plusban();  // 전화번호를 차단하는 함수
+	void minusban();  // 차단된 전화번호의 차단을 해제하는 함수
 };
-
+// 전화번호를 추가하는 함수 정의
 void Phonebook::addp() {
+	cin.ignore();  // getline() 함수에서 입력 버퍼를 지우기 위함
 	cout << endl << "추가하고 싶은 이름을 입력하세요." << endl;
-	cin >> name;
+	getline(cin, name);
 	if (phonebook.find(name) == phonebook.end()) {
 		cout << "전화번호를 입력하세요." << endl;
-		cin >> number;
-		phonebook.insert(make_pair(name, number));
+		getline(cin, number);
+		phonebook.insert(make_pair(name, number));  
 		cout << name << " 님의 전화번호를 저장했습니다." << endl << endl;
-		addr();
-		addaddress();
+		addr();  // addr() 함수 호출
+		addaddress();  // addaddress() 함수 호출
+		addday();  // addday() 함수 호출
 	}
-	else
+	else  // 입력 받은 이름이 이미 전화번호부에 존재한다면
 		cout << "입력하신 이름이 이미 전화번호부에 존재합니다." << endl;
 
 }
-
+// 그룹을 추가하는 함수 정의
 void Phonebook::addr() {
-	int a;
-	cout << endl << name << " 님과의 관계를 저장하시겠습니까?" << endl;
-	cout << "1. 입력" << endl << "2. 건너뛰기" << endl;
-	cin >> a;
-	if (a == 1) {
-		cout << "사용자와의 관계를 입력하세요 (가족, 친구, 동료 중 하나를 입력하세요)" << endl;
-		cin >> r;
-		while (r != "가족" && r != "친구" && r != "동료" && r != "없음") {
-			cout << "잘못 입력하셨습니다." << endl;
-			cout << "사용자와의 관계를 입력하세요 (가족, 친구, 동료 중 하나를 입력하세요)" << endl;
+	int a = 0;
+	cout << endl << name << " 그룹을 저장하시겠습니까? (가족, 친구, 동료 중 택 1)" << endl;
+
+	while (a != 1 && a != 2) {
+		cout << "1. 입력" << endl << "2. 건너뛰기" << endl;
+		cin >> a;
+
+		if (a == 1) {
+			cout << "그룹명을 입력하세요 (가족, 친구, 동료 중 하나를 입력하세요)" << endl;
 			cin >> r;
+			while (r != "가족" && r != "친구" && r != "동료") {
+				cout << "잘못 입력하셨습니다. 다시 입력해 주세요." << endl;
+				cout << "그룹명을 입력하세요 (가족, 친구, 동료 중 하나를 입력하세요)" << endl;
+				cin >> r;
+			}
+			relationship.insert(make_pair(name, r));
+			cout << name << " 님의 그룹을 " << "<" << r << ">" << "(으)로 저장했습니다." << endl;
 		}
-		relationship.insert(make_pair(name, r));
-		cout << name << " 님과의 관계를 " << r << "(으)로 저장했습니다." << endl;
-	}
-	else {
-		relationship.insert(make_pair(name, "없음"));
-		cout << name << " 님과의 관계는 '없음'으로 저장했습니다." << endl;
+		else if (a == 2) {
+			relationship.insert(make_pair(name, "없음"));
+			cout << name << " 님의 그룹을 <없음>으로 저장했습니다." << endl;
+		}
+		else {
+			cout << "잘못 입력하셨습니다. 다시 입력해 주세요." << endl;
+		}
 	}
 }
-
+// 주소를 추가하는 함수 정의
 void Phonebook::addaddress() {
-	int a;
+	int a = 0;
 	cout << endl << name << " 님의 주소를 저장하시겠습니까?" << endl;
-	cout << "1. 입력" << endl << "2. 건너뛰기" << endl;
-	cin >> a;
-	if (a == 1) {
-		cout << name << " 님의 주소를 입력해 주세요.(띄어쓰기를 하지 않고 입력해 주세요)" << endl;
-		cin >> address;
-		addressbook.insert(make_pair(name, address));
-		cout << name << " 님의 주소를 " << address << " 로 저장했습니다." << endl;
-	}
-	else {
-		addressbook.insert(make_pair(name, "없음"));
-		cout << name << " 님의 주소는 저장하지 않았습니다." << endl;
+
+	while (a != 1 && a != 2) {
+		cout << "1. 입력" << endl << "2. 건너뛰기" << endl;
+		cin >> a;
+		if (a == 1) {
+				cin.ignore();
+				cout << name << " 님의 주소를 입력해 주세요." << endl;
+				getline(cin, address);
+				addressbook.insert(make_pair(name, address));
+				cout << name << " 님의 주소를 " << "<" << address << ">" << " (으)로 저장했습니다." << endl;
+		}
+		else if (a == 2) {
+			addressbook.insert(make_pair(name, "없음"));
+			cout << name << " 님의 주소는 저장하지 않았습니다." << endl;
+		}
+		else {
+			cout << "잘못 입력하셨습니다. 다시 입력해 주세요." << endl;
+		}
 	}
 }
-
+// 기념일을 추가하는 함수 정의
+void Phonebook::addday() {
+	int a = 0;
+	cout << endl << name << " 님의 기념일을 저장하시겠습니까?" << endl;
+	while (a != 1 && a != 2) {
+		cout << "1. 입력" << endl << "2. 건너뛰기" << endl;
+		cin >> a;
+		if (a == 1) {
+			cin.ignore();
+			cout << name << " 님의 기념일의 이름을 입력해 주세요." << endl;
+			getline(cin, dayname);
+			daybook.insert(make_pair(name, dayname));
+			cout << name << " 님의 기념일의 날짜를 입력해 주세요." << endl;
+			getline(cin, date);
+			datebook.insert(make_pair(name, date));
+			cout << name << " 님의 기념일 " << "<" << dayname << ">" << " 의 날짜를 " << "<" << date << ">" << " (으)로 저장했습니다." << endl;
+		}
+		else if (a == 2) {
+			daybook.insert(make_pair(name, "없음"));
+			cout << name << " 님의 기념일을 저장하지 않았습니다." << endl;
+		}
+		else {
+			cout << "잘못 입력하셨습니다. 다시 입력해 주세요." << endl;
+		}
+	}
+}
+// 전화번호를 검색하는 함수 정의
 void Phonebook::search() {
+	cin.ignore();  // getline() 함수를 실행할 때 오류가 발생하지 않도록 입력버퍼를 지우기 위한 코드
 	cout << endl << "전화번호를 찾고 싶은 사람의 이름을 입력하세요." << endl;
-	cin >> name;
+	getline(cin, name);
 	if (phonebook.find(name) == phonebook.end())
 		cout << "입력하신 이름은 전화번호부에 없습니다." << endl;
 	else
-		cout << name << " 님의 전화번호는 " << phonebook[name] << " 입니다." << endl << endl;
+		cout << name << " 님의 전화번호는 " << "<" << phonebook[name] << ">" << " 입니다." << endl << endl;
 }
-
+// 주소를 검색하는 함수 정의
 void Phonebook::searcha() {
+	cin.ignore();
 	cout << endl << "주소를 찾고 싶은 사람의 이름을 입력하세요." << endl;
-	cin >> name;
+	getline(cin, name);
 	if (phonebook.find(name) == phonebook.end())
 		cout << "입력하신 이름은 전화번호부에 없습니다." << endl << endl;
 	else if (addressbook[name]=="없음")
 		cout << "입력하신 이름은 주소가 저장되어 있지 않습니다." << endl << endl;
 	else
-		cout << name << " 님의 주소는 " << addressbook[name] << " 입니다." << endl << endl;
+		cout << name << " 님의 주소는 " << "<" << addressbook[name] << ">" << " 입니다." << endl << endl;
 }
-
+// 기념일을 검색하는 함수 정의
+void Phonebook::searchd() {
+	cin.ignore();
+	cout << endl << "기념일을 찾고 싶은 사람의 이름을 입력하세요." << endl;
+	getline(cin, name);
+	if (phonebook.find(name) == phonebook.end())
+		cout << "입력하신 이름은 전화번호부에 없습니다." << endl << endl;
+	else if (daybook[name] == "없음")
+		cout << "입력하신 이름의 기념일은 저장되어 있지 않습니다." << endl << endl;
+	else
+		cout << name << " 님의 기념일 " << "<" << daybook[name] << ">" << " 의 날짜는 " << "<" << datebook[name] << ">" << " 입니다." << endl << endl;
+}
+// 전화번호를 삭제하는 함수 정의
 void Phonebook::pop() {
+	cin.ignore();
 	cout << endl << "삭제하고 싶은 번호의 이름을 입력하세요." << endl;
-	cin >> name;
+	getline(cin, name);
 	if (phonebook.find(name) == phonebook.end()) 
 		cout << "입력하신 이름은 전화번호부에 없습니다." << endl;
 	else {
@@ -115,66 +176,90 @@ void Phonebook::pop() {
 		cout << name << " 님의 번호는 삭제되었습니다." << endl;
 	}
 }
-
+// 전화번호를 변경하는 함수 정의
 void Phonebook::change() {
+	cin.ignore();
 	cout << endl << "전화번호를 바꾸고 싶은 사람의 이름을 입력하세요." << endl;
-	cin >> name;
+	getline(cin, name);
 	if (phonebook.find(name) == phonebook.end()) 
 		cout << "입력하신 이름은 전화번호부에 없습니다." << endl;
 	else {
-		phonebook.erase(name);
 		cout << "새로운 전화번호를 입력하세요." << endl;
-		cin >> number;
-		phonebook.insert(make_pair(name, number));
-		cout << name << "님의 전화번호를 " << number << "로 변경하였습니다." << endl;
+		getline(cin, number);
+		if (phonebook[name] == number) {
+			cout << "기존에 저장된 전화번호와 같습니다." << endl;
+		}
+		else {
+			phonebook.erase(name);
+			phonebook.insert(make_pair(name, number));
+			cout << name << "님의 전화번호를 " << "<" << number << ">" << " (으)로 변경하였습니다." << endl;
+		}
 	}
 }
-
+// 전체 전화번호를 출력하는 함수 정의
 void Phonebook::show() {
 	if (phonebook.empty()) {
 		cout << "전화번호부에 저장된 번호가 없습니다." << endl;
 	}
 	else {
-		cout << "    이  름      " << "     전 화 번 호" << endl <<endl;
+		int i = 1;
+		cout << "        < 전 화 번 호 부 >" << endl << endl;
+		cout << "     이  름      " << "     전 화 번 호" << endl <<endl;
 		for (it = phonebook.begin(); it != phonebook.end(); it++) {
-			cout << "    " << it->first << "          " << it->second << endl;
+			cout << i << ".   " << it->first << "          " << it->second << endl;
+			i++;
 		}
 	}
-	
 }
-
+// 그룹을 기준으로 전화번호를 출력하는 함수 정의
 void Phonebook::showr() {
-	cout << endl << "검색하시고 싶은 사람들과 사용자와의 관계를 입력하세요 (가족, 친구, 동료, 없음 중 하나를 선택하세요)" << endl;
+	cout << endl << "검색하시고 싶은 그룹을 입력하세요.(가족, 친구, 동료, 없음 중 하나를 선택하세요)" << endl;
 	cin >> r;
 	while (r != "가족" && r != "친구" && r != "동료" && r != "없음") {
 		cout << "잘못 입력하셨습니다." << endl;
-		cout << "검색하시고 싶은 사람들과 사용자와의 관계를 입력하세요 (가족, 친구, 동료, 없음 중 하나를 선택하세요)" << endl;
+		cout << "검색하시고 싶은 그룹을 입력하세요.(가족, 친구, 동료, 없음 중 하나를 선택하세요)" << endl;
 		cin >> r;
 	}
-	cout << "   관  계       " << "   이  름" << endl << endl;
+	int a = 0;
 	for (it2 = relationship.begin(); it2 != relationship.end(); it2++) {
-		if (it2->second == r) {
-			cout << "    " << it2->second << "           " << it2->first << endl;
+		if (it2->second == r)
+		a++;
+	}		
+	if (a == 0)
+		cout << "<" << r << ">" << " 그룹에 속한 전화번호는 없습니다." << endl;
+	else {
+		cout << "           < 그 룹 전 화 번 호 부 >" << endl << endl;
+		cout << "    그  룹       " << "   이  름      " << "     전 화 번 호" << endl << endl;
+		int cnt = 1;
+		for (it2 = relationship.begin(); it2 != relationship.end(); it2++) {
+			if (it2->second == r) {
+				string name = it2->first;
+				cout << cnt << ".   " << it2->second << "           " << it2->first << "          " << phonebook[name] << endl;
+				cnt++;
+			}
 		}
 	}
 }
-
+// 차단된 번호를 출력하는 함수 정의
 void Phonebook::showb() {
 	if (banbook.empty()) {
 		cout << "차단된 번호가 없습니다." << endl;
 	}
 	else {
-		cout << "    이  름      " << "     전 화 번 호" << endl << endl;
+		int a = 1;
+		cout << "      < 차 단 전 화 번 호 부 >" << endl << endl;
+		cout << "     이  름      " << "     전 화 번 호" << endl << endl;
 		for (it3 = banbook.begin(); it3 != banbook.end(); it3++) {
-			cout << "    " << it3->first << "          " << it3->second << endl;
+			cout << a << ".   " << it3->first << "          " << it3->second << endl;
+			a++;
 		}
 	}
 }
-
-
+// 전화번호를 차단하는 함수 정의
 void Phonebook::plusban() {
+	cin.ignore();
 	cout << endl << "차단하고 싶으신 번호의 이름을 입력하세요." << endl;
-	cin >> name;
+	getline(cin, name);
 	if (banbook.find(name) == banbook.end()) {
 		number = phonebook[name];
 		banbook.insert(make_pair(name, number));
@@ -184,10 +269,11 @@ void Phonebook::plusban() {
 	else
 		cout << name << " 님의 전화번호가 전화번호부에 없습니다." << endl;
 }
-
+// 전화번호의 차단을 해제하는 함수 정의
 void Phonebook::minusban() {
+	cin.ignore();
 	cout << endl << "차단을 풀고 싶으신 번호의 이름을 입력하세요." << endl;
-	cin >> name;
+	getline(cin, name);
 	if (banbook.find(name) == banbook.end()) {
 		if(phonebook.find(name)==phonebook.end())
 			cout << name << " 님의 전화번호가 전화번호부에 없습니다." << endl;
@@ -207,12 +293,13 @@ int main() {
 	Phonebook p;
 	int a = 0;
 
-	while (a != 11) {
+	// 12를 입력받으면 메인 함수가 종료되며, 12를 입력 받기 전까지 각 코드에 해당되는 함수를 실행한다.
+	while (a != 12) {
 		cout << endl << "전화번호부 기능 중 이용하고 싶은 기능을 선택하세요" << endl;
 		cout << "1. 전화번호 추가" << endl << "2. 전화번호 검색" << endl << "3. 전화번호 삭제" << endl << "4. 전화번호 변경"
-			<< endl << "5. 전화번호 전체 출력" << endl << "6. 사용자와의 관계를 기준으로 이름 출력"
-			<< endl << "7. 주소 검색" << endl << "8. 전화번호 차단"<< endl << "9. 전화번호 차단 해제" 
-			<< endl << "10. 차단된 번호 출력" << endl << "11. 전화번호부 종료" << endl << endl;
+			<< endl << "5. 전화번호 전체 출력" << endl << "6. 그룹 출력"
+			<< endl << "7. 주소 검색" << endl << "8. 기념일 검색" << endl << "9. 전화번호 차단"<< endl << "10. 전화번호 차단 해제" 
+			<< endl << "11. 차단된 번호 출력" << endl << "12. 전화번호부 종료" << endl << endl;
 		cin >> a;
 		
 		if (a == 1)
@@ -230,12 +317,14 @@ int main() {
 		else if (a == 7)
 			p.searcha();
 		else if (a == 8)
-			p.plusban();
+			p.searchd();
 		else if (a == 9)
-			p.minusban();
+			p.plusban();
 		else if (a == 10)
-			p.showb();
+			p.minusban();
 		else if (a == 11)
+			p.showb();
+		else if (a == 12)
 			cout << "전화번호부를 종료합니다." << endl;
 		else
 			cout << "번호를 잘못 입력하셨습니다. 번호를 다시 입력해 주세요." << endl;
